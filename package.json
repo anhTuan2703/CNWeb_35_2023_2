@@ -1,0 +1,27 @@
+{
+  "name": "cnweb_35_20232_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --inspect app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anhTuan2703/CNWeb_35_2023_2.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anhTuan2703/CNWeb_35_2023_2/issues"
+  },
+  "homepage": "https://github.com/anhTuan2703/CNWeb_35_2023_2#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "mysql2": "^3.9.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
