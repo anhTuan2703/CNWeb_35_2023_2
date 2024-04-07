@@ -68,8 +68,8 @@ function createdTable_Product(opt) {
         id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
         name VARCHAR(255) NOT NULL,
         img VARCHAR(255),
-        category_id VARCHAR(255),
-        seller_id VARCHAR(255),
+        category_id INT(20),
+        seller_id INT(20),
         unit VARCHAR(50),
         price BIGINT,
         description TEXT,
@@ -87,8 +87,8 @@ function createdTable_Product(opt) {
 function createdTable_Order(opt) {
 	const sql = `CREATE TABLE IF NOT EXISTS Orders (
         id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        product_id VARCHAR(255) NOT NULL,
-        customer_id VARCHAR(255) NOT NULL,
+        product_id INT(20) NOT NULL,
+        customer_id INT(20) NOT NULL,
         created_at TIMESTAMP NOT NULL
     );
     `;
