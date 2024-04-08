@@ -12,7 +12,7 @@ class AuthUtil {
     }
    
     static createToken = (payload) => {
-        return jwt.sign(payload, app_config.secret_key, { expiresIn: '1 day' });
+        return jwt.sign(payload, app_config.secret_key, { expiresIn: '1d' });
     }
 }
  

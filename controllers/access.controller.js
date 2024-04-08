@@ -48,7 +48,33 @@ class AccessController {
     }
  
     static login = async (req, res) => {
- 
+        const { account_name, password } = req.body;
+        try {
+            const foundUser = await User.findByUserName(account_name);
+            if(!foundUser){
+                throw new Error('User not found');
+            }
+            const isPasswordValid = await AuthUtil.comparePassword(password, foundUser.password);
+            if(!isPasswordValid){
+                throw new Error('Invalid password');
+            }
+            console.log(foundUser)
+            const token = AuthUtil.createToken({
+                userId: foundUser.id,
+                email: foundUser.email,
+                role: foundUser.role
+            });
+            return res.status(200).send({
+                success: true,
+                message: 'Login successful',
+                token
+            });
+        } catch (error) {
+            return res.status(400).send({
+                success: false,
+                message: error.message
+            });
+        }
     }
 }
  
