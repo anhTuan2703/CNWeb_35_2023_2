@@ -37,7 +37,7 @@ class AccessController {
             return res.status(201).send({
                 success: true,
                 message: 'User created successfully',
-                user: newUser.insertId
+                userId: newUser.insertId
             });
         } catch (error) {
             return res.status(400).send({
@@ -58,7 +58,6 @@ class AccessController {
             if(!isPasswordValid){
                 throw new Error('Invalid password');
             }
-            console.log(foundUser)
             const token = AuthUtil.createToken({
                 userId: foundUser.id,
                 email: foundUser.email,
