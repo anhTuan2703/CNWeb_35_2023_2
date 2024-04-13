@@ -22,3 +22,8 @@ exports.createOrder = catchAsyncError(async (req, res, next) => {
 	}
 });
 
+exports.deleteOrder = catchAsyncError(async (req, res, next) => {
+    const productId = req.product_id;
+
+});
+

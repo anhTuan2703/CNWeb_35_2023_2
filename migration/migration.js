@@ -82,30 +82,47 @@ function createdTable_Product(opt) {
     `;
 	if (opt === true) {
 		query(sql);
-		setTimeout(() => createdTable_Order(opt), 2000);
+		setTimeout(() => createdTable_ShippingInfo(opt), 2000);
 	}
 }
 
-// function createdTable_ShippingInfo(opt){
-//     const sql = `CREATE TABLE shipping_info (
-//         id INT(11) NOT NULL AUTO_INCREMENT,
-//         address VARCHAR(255),
-//         phoneNo VARCHAR(20) ,
-//         city VARCHAR(100) ,
-//         PRIMARY KEY (id)
-//       );
-//       `;
-//       if (opt === true){
-//         query(sql);
-//         setTimeout(() => createdTable_Order, 2000);
-//       }
-// }
+function createdTable_ShippingInfo(opt){
+    const sql = `CREATE TABLE shipping_info (
+        id INT(20) NOT NULL AUTO_INCREMENT,
+        address VARCHAR(255),
+        phoneNo VARCHAR(20) ,
+        city VARCHAR(100) ,
+        PRIMARY KEY (id)
+      );
+      `;
+      if (opt === true){
+        query(sql);
+        setTimeout(() => createdTable_Order(opt), 2000);
+      }
+}
 
 function createdTable_Order(opt) {
 	const sql = `CREATE TABLE IF NOT EXISTS Orders (
         id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        product_id INT(20) NOT NULL,
         customer_id INT(20) NOT NULL,
+        ship_price DECIMAL (13, 2),
+        total_price DECIMAL (13, 2),
+        ship_id INT(20),
+        created_at TIMESTAMP NOT NULL
+    );
+    `;
+	if (opt === true) {
+		query(sql);
+		setTimeout(() => createdTablee_ItemOrder(opt), 2000);
+	}
+}
+
+function createdTablee_ItemOrder(opt){
+    const sql = `CREATE TABLE IF NOT EXISTS ItemOrder (
+        id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        product_id INT(20) NOT NULL,
+        order_id INT(20) NOT NULL,
+        amount INT(10) NOT NULL,
         created_at TIMESTAMP NOT NULL
     );
     `;
