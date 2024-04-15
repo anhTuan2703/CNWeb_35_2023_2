@@ -19,9 +19,11 @@ function createTable_Profile(opt) {
 function createdTable_Account(opt) {
 	const sql = `CREATE TABLE IF NOT EXISTS Account (
         id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        profile_id INT(20) NOT NULL,
         account_name VARCHAR(255) NOT NULL,
         password VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP NOT NULL
+        created_at TIMESTAMP NOT NULL,
+        FOREIGN KEY (profile_id) REFERENCES Profile(id) ON DELETE CASCADE,
     );    
     `;
 	if (opt === true) {
@@ -31,7 +33,9 @@ function createdTable_Account(opt) {
 }
 function createTable_Customer(opt){
     const sql = `CREATE TABLE IF NOT EXISTS Customer (
-        id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT
+        id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        account_id INT(20) NOT NULL,
+        FOREIGN KEY (account_id) REFERENCES Account(id) ON DELETE CASCADE,
     );
     `;
     if (opt === true) {
@@ -43,7 +47,9 @@ function createTable_Seller(opt){
     const sql = `CREATE TABLE IF NOT EXISTS Seller (
         id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
         shop_name TEXT,
-        description TEXT
+        description TEXT,
+        account_id INT(20) NOT NULL,
+        FOREIGN KEY (account_id) REFERENCES Account(id) ON DELETE CASCADE,
     );    
     `;
     if (opt === true) {
@@ -51,8 +57,6 @@ function createTable_Seller(opt){
 		setTimeout(() => createdTable_Category(opt), 2000);
 	}
 }
-
-
 function createdTable_Category(opt) {
 	const sql = `CREATE TABLE IF NOT EXISTS Category (
         id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -64,7 +68,6 @@ function createdTable_Category(opt) {
 		setTimeout(() => createdTable_Product(opt), 2000);
 	}
 }
-
 function createdTable_Product(opt) {
 	const sql = `CREATE TABLE IF NOT EXISTS Product (
         id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -78,6 +81,8 @@ function createdTable_Product(opt) {
         number INT,
         rating FLOAT,
         created_at TIMESTAMP NOT NULL
+        FOREIGN KEY (category_id) REFERENCES Category(id) ON DELETE CASCADE,
+        FOREIGN KEY (seller_id) REFERENCES Seller(id) ON DELETE CASCADE,
     );    
     `;
 	if (opt === true) {
@@ -85,9 +90,8 @@ function createdTable_Product(opt) {
 		setTimeout(() => createdTable_ShippingInfo(opt), 2000);
 	}
 }
-
 function createdTable_ShippingInfo(opt){
-    const sql = `CREATE TABLE shipping_info (
+    const sql = `CREATE TABLE Shipping_info (
         id INT(20) NOT NULL AUTO_INCREMENT,
         address VARCHAR(255),
         phoneNo VARCHAR(20) ,
@@ -100,7 +104,6 @@ function createdTable_ShippingInfo(opt){
         setTimeout(() => createdTable_Order(opt), 2000);
       }
 }
-
 function createdTable_Order(opt) {
 	const sql = `CREATE TABLE IF NOT EXISTS Orders (
         id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -109,21 +112,24 @@ function createdTable_Order(opt) {
         total_price DECIMAL (13, 2),
         ship_id INT(20),
         created_at TIMESTAMP NOT NULL
+        FOREIGN KEY (customer_id) REFERENCES Customer(id) ON DELETE CASCADE,
+        FOREIGN KEY (ship_id) REFERENCES ShippingInfo(id) ON DELETE CASCADE,
     );
     `;
 	if (opt === true) {
 		query(sql);
-		setTimeout(() => createdTablee_ItemOrder(opt), 2000);
+		setTimeout(() => createdTable_ItemOrder(opt), 2000);
 	}
 }
-
-function createdTablee_ItemOrder(opt){
+function createdTable_ItemOrder(opt){
     const sql = `CREATE TABLE IF NOT EXISTS ItemOrder (
         id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
         product_id INT(20) NOT NULL,
         order_id INT(20) NOT NULL,
         amount INT(10) NOT NULL,
         created_at TIMESTAMP NOT NULL
+        FOREIGN KEY (order_id) REFERENCES Orders(id) ON DELETE CASCADE,
+        FOREIGN KEY (product_id) REFERENCES Product(id) ON DELETE CASCADE,
     );
     `;
 	if (opt === true) {

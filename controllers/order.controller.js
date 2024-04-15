@@ -1,8 +1,8 @@
 const Order = require("../models/order.model");
 const catchAsyncError = require("../middlewares/catchAsyncErrors");
 const { query } = require("../database/database");
-const Product = require("../models/product.model");
-const User = require("../models/user.model");
+//const Product = require("../models/product.model");
+//const User = require("../models/user.model");
 
 exports.createOrder = catchAsyncError(async (req, res, next) => {
 
@@ -24,6 +24,6 @@ exports.createOrder = catchAsyncError(async (req, res, next) => {
 
 exports.deleteOrder = catchAsyncError(async (req, res, next) => {
     const productId = req.product_id;
-
+	
 });
 
