@@ -1,5 +1,5 @@
 const express = require('express');
-const {query} = require("./database/database.js")
+const middleError = require("./middlewares/errors");
 const app = express();
 const port = 3000;
 
@@ -11,11 +11,7 @@ app.listen(port, () => {
   console.log(`Server is listening at http://localhost:${port}`);
 });
 
-(async () => {
-  try {
-    const results = await query('SELECT * FROM Profile');
-    console.log("data length: " + results.length);
-  } catch (error) {
-    console.error('Error:', error);
-  }
-})();
+const orderRoute = require("./routes/order");
+app.use("/api/v1", orderRoute);
+
+app.use(middleError);
