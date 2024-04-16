@@ -20,6 +20,7 @@ exports.createOrder = catchAsyncError(async (req, res, next) => {
 			err,
 		});
 	}
+	console.log("create");
 });
 
 exports.deleteOrder = catchAsyncError(async (req, res, next) => {

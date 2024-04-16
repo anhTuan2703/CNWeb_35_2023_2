@@ -13,6 +13,7 @@ function createTable_Profile(opt) {
       `;
 	if (opt === true) {
 		query(sql);
+        setTimeout(() => console.log("create table profile"), 500);
 		setTimeout(() => createdTable_Account(opt), 2000);
 	}
 }
@@ -23,11 +24,12 @@ function createdTable_Account(opt) {
         account_name VARCHAR(255) NOT NULL,
         password VARCHAR(255) NOT NULL,
         created_at TIMESTAMP NOT NULL,
-        FOREIGN KEY (profile_id) REFERENCES Profile(id) ON DELETE CASCADE,
+        FOREIGN KEY (profile_id) REFERENCES Profile(id) ON DELETE CASCADE
     );    
     `;
 	if (opt === true) {
 		query(sql);
+        setTimeout(() => console.log("create table account"), 500);
 		setTimeout(() => createTable_Customer(opt), 2000);
 	}
 }
@@ -35,11 +37,12 @@ function createTable_Customer(opt){
     const sql = `CREATE TABLE IF NOT EXISTS Customer (
         id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
         account_id INT(20) NOT NULL,
-        FOREIGN KEY (account_id) REFERENCES Account(id) ON DELETE CASCADE,
+        FOREIGN KEY (account_id) REFERENCES Account(id) ON DELETE CASCADE
     );
     `;
     if (opt === true) {
 		query(sql);
+        setTimeout(() => console.log("create table customer"), 500);
 		setTimeout(() => createTable_Seller(opt), 2000);
 	}
 }
@@ -49,11 +52,12 @@ function createTable_Seller(opt){
         shop_name TEXT,
         description TEXT,
         account_id INT(20) NOT NULL,
-        FOREIGN KEY (account_id) REFERENCES Account(id) ON DELETE CASCADE,
+        FOREIGN KEY (account_id) REFERENCES Account(id) ON DELETE CASCADE
     );    
     `;
     if (opt === true) {
 		query(sql);
+        setTimeout(() => console.log("create table seller"), 500);
 		setTimeout(() => createdTable_Category(opt), 2000);
 	}
 }
@@ -65,6 +69,7 @@ function createdTable_Category(opt) {
     `;
 	if (opt === true) {
 		query(sql);
+        setTimeout(() => console.log("create table category"), 500);
 		setTimeout(() => createdTable_Product(opt), 2000);
 	}
 }
@@ -80,13 +85,14 @@ function createdTable_Product(opt) {
         description TEXT,
         number INT,
         rating FLOAT,
-        created_at TIMESTAMP NOT NULL
+        created_at TIMESTAMP NOT NULL,
         FOREIGN KEY (category_id) REFERENCES Category(id) ON DELETE CASCADE,
-        FOREIGN KEY (seller_id) REFERENCES Seller(id) ON DELETE CASCADE,
+        FOREIGN KEY (seller_id) REFERENCES Seller(id) ON DELETE CASCADE
     );    
     `;
 	if (opt === true) {
 		query(sql);
+        setTimeout(() => console.log("create table product"), 500);
 		setTimeout(() => createdTable_ShippingInfo(opt), 2000);
 	}
 }
@@ -101,6 +107,7 @@ function createdTable_ShippingInfo(opt){
       `;
       if (opt === true){
         query(sql);
+        setTimeout(() => console.log("create table shipping info"), 500);
         setTimeout(() => createdTable_Order(opt), 2000);
       }
 }
@@ -111,13 +118,14 @@ function createdTable_Order(opt) {
         ship_price DECIMAL (13, 2),
         total_price DECIMAL (13, 2),
         ship_id INT(20),
-        created_at TIMESTAMP NOT NULL
+        created_at TIMESTAMP NOT NULL,
         FOREIGN KEY (customer_id) REFERENCES Customer(id) ON DELETE CASCADE,
-        FOREIGN KEY (ship_id) REFERENCES ShippingInfo(id) ON DELETE CASCADE,
+        FOREIGN KEY (ship_id) REFERENCES Shipping_info(id) ON DELETE CASCADE
     );
     `;
 	if (opt === true) {
 		query(sql);
+        setTimeout(() => console.log("create table order"), 500);
 		setTimeout(() => createdTable_ItemOrder(opt), 2000);
 	}
 }
@@ -127,9 +135,9 @@ function createdTable_ItemOrder(opt){
         product_id INT(20) NOT NULL,
         order_id INT(20) NOT NULL,
         amount INT(10) NOT NULL,
-        created_at TIMESTAMP NOT NULL
+        created_at TIMESTAMP NOT NULL,
         FOREIGN KEY (order_id) REFERENCES Orders(id) ON DELETE CASCADE,
-        FOREIGN KEY (product_id) REFERENCES Product(id) ON DELETE CASCADE,
+        FOREIGN KEY (product_id) REFERENCES Product(id) ON DELETE CASCADE
     );
     `;
 	if (opt === true) {
