@@ -4,13 +4,24 @@ const ErrorHandler = require("../utils/errorHandler");
 class Order {
 	constructor(order) {
 		this.id = order.id || null;
-        this.customerId = order.customerId || null;
+        this.customerId = order.customerId || 0;
 		this.itemsOrder = order.itemsOrder || [];
 		this.shippingInfo = order.shippingInfo || null;
 		this.shipPrice = order.shipPrice || 0;
 		this.totalPrice = order.totalPrice ||0;
-		this.shipId = this.shipId || null;
-		this.createdAt = order.createdAt || Date.now;
+		this.shipId = order.shipId || null;
+		// this.createdAt = order.createdAt || Date.now;
+		const now = new Date();
+		const year = now.getFullYear();
+		const month = String(now.getMonth() + 1).padStart(2, '0'); // Thêm '0' phía trước nếu cần
+		const day = String(now.getDate()).padStart(2, '0'); // Thêm '0' phía trước nếu cần
+		const hours = String(now.getHours()).padStart(2, '0'); // Thêm '0' phía trước nếu cần
+		const minutes = String(now.getMinutes()).padStart(2, '0'); // Thêm '0' phía trước nếu cần
+		const seconds = String(now.getSeconds()).padStart(2, '0'); // Thêm '0' phía trước nếu cần
+		
+		const createdAt = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+		this.createdAt = createdAt;
+		
 	}
 	// create new order
 	async createOrder() {
@@ -27,9 +38,9 @@ class Order {
 
 		const res_shippingInfo = await query(sql_shipping, params_shipping);
 		this.shippingInfo.id = res_shippingInfo.insertId;
-		
+
 		const sql_order =
-			"INSERT INTO Order (customer_id, ship_price, total_price, ship_id, created_at) VALUES (?, ?, ?)";
+			"INSERT INTO Orders (customer_id, ship_price, total_price, ship_id, created_at) VALUES (?, ?, ?, ?, ?)";
 		const params_order = [
 			this.customerId,
 			this.shipPrice,
@@ -42,8 +53,8 @@ class Order {
 
 		for (const item of this.itemsOrder) {
 			const sql_orderItem =
-				"INSERT INTO ItemOrder (idOrder, idProduct, amount) VALUES (?,?,?)";
-			const params_orderItem = [this.id, item.id, item.amount];
+				"INSERT INTO ItemOrder (order_id, product_id, amount, created_at) VALUES (?,?,?, ?)";
+			const params_orderItem = [this.id, item.id, item.amount, this.createdAt];
 			await query(sql_orderItem, params_orderItem);
 		}
 

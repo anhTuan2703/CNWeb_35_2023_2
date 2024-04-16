@@ -1,13 +1,13 @@
 const Order = require("../models/order.model");
 const catchAsyncError = require("../middlewares/catchAsyncErrors");
-const { query } = require("../database/database");
 //const Product = require("../models/product.model");
 //const User = require("../models/user.model");
 
 exports.createOrder = catchAsyncError(async (req, res, next) => {
-
+	console.log(req.body);
 	const order = new Order(req.body);
-	order.customerId = req.customerId;
+	
+	order.customerId = req.body.customerId;
 	try {
 		const newOrder = await order.createOrder();
 		res.status(200).json({
@@ -20,7 +20,6 @@ exports.createOrder = catchAsyncError(async (req, res, next) => {
 			err,
 		});
 	}
-	console.log("create");
 });
 
 exports.deleteOrder = catchAsyncError(async (req, res, next) => {
