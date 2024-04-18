@@ -12,16 +12,8 @@ class Order {
 		this.shipId = order.shipId || null;
 		// this.createdAt = order.createdAt || Date.now;
 		const now = new Date();
-		const year = now.getFullYear();
-		const month = String(now.getMonth() + 1).padStart(2, '0'); // Thêm '0' phía trước nếu cần
-		const day = String(now.getDate()).padStart(2, '0'); // Thêm '0' phía trước nếu cần
-		const hours = String(now.getHours()).padStart(2, '0'); // Thêm '0' phía trước nếu cần
-		const minutes = String(now.getMinutes()).padStart(2, '0'); // Thêm '0' phía trước nếu cần
-		const seconds = String(now.getSeconds()).padStart(2, '0'); // Thêm '0' phía trước nếu cần
-		
-		const createdAt = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+		const createdAt = now.toISOString().slice(0, 19).replace('T', ' ');
 		this.createdAt = createdAt;
-		
 	}
 	// create new order
 	async createOrder() {
