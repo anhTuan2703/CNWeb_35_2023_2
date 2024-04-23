@@ -91,3 +91,36 @@ exports.updateOrder = catchAsyncError(async (req, res, next) => {
 	});
 });
 
+// get order detail
+exports.getOrderDetail = catchAsyncError(async (req, res, next) =>{
+	const id = req.params.id;
+	const order = await query (`SELECT * FROM Orders WHERE id = ?`, id);
+	if (orderdb == null) 
+		res.status(500).json({
+			status: "error",
+			data: null
+	});
+
+	const itemsOrder = await query (`SELEECT * FROM ItemOrder WHERE order_id = ?`, id);
+	const shippingInfo = await query (`SELECT * FROM Shipping_Info WHERE id = ?`, order.ship_id);
+
+	const responseData = {
+		items_order: itemsOrder.map(item => ({
+			id: item.id,
+			amount: item.amount
+		})),
+		shipping_info: {
+			address: shippingInfo[0].address,
+			phoneNo: shippingInfo[0].phoneNo,
+			city: shippingInfo[0].city
+		},
+		ship_price: order[0].ship_price,
+		total_price: order[0].total_price
+	};
+
+	res.status(200).json({
+		status: "success",
+		data: responseData
+	})
+});
+
