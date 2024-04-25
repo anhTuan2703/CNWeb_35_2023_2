@@ -1,22 +1,21 @@
-const express = require('express');
-const {query} = require("./database/database.js")
-const app_config = require('./configs/app.config')
-const app = express();
-const router = require('./routes/router');
-const e = require('express');
+//require('./migration/migration.js')
 
+const express = require('express');
+const { query } = require("./database/database.js")
+const app = express();
+const app_config = require('./configs/app.config');
+const router = require('./routes/router');
 const port = app_config.port || 3000;
 
 app.use(express.json({
   limit: '2mb'
 }));
-
 app.use(express.urlencoded({
   extended: true
 }));
 
 app.get('/', (req, res) => {
-  res.send('Hello World!'); 
+  res.send('Hello World!');
 });
 
 app.listen(port, () => {

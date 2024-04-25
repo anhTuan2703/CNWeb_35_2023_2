@@ -1,34 +1,38 @@
 const { query } = require('../database/database.js');
- 
+
 class User {
-    static async create({ name, account_name, email, password, phone_number, cccd, date_of_birth, role }) {
-        const sql = 'INSERT INTO Profile (name, account_name, email, password, phone_number, cccd, date_of_birth, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-        const params = [ name, account_name, email, password, phone_number, cccd, date_of_birth, role ];
-        const newUser = await query(sql, params);
-        return newUser;
+    static createAccount = async ({ account_name, password, role, cccd, email }) => {
+        const sql = `INSERT INTO Account (account_name, password, role, cccd, email, created_at) VALUES (?, ?, ?, ?, ?, ?)`;
+        const params = [account_name, password, role, cccd, email, Date.now()];
+        const result = await query(sql, params);
+        return result;
     }
- 
-    static async findByEmail(email) {
-        const sql = 'SELECT * FROM Profile WHERE email = ?';
-        const params = [email];
-        const foundUser = await query(sql, params);
-        return foundUser[0];
+
+    static createProfile = async ({ name, account_id, phone_number, dob }) => {
+        const sql = `INSERT INTO Profile (name, account_id, phone_number, date_of_birth) VALUES (?, ?, ?, ?)`;
+        const params = [name, account_id, phone_number, dob];
+        const result = await query(sql, params);
+        return result;
     }
- 
-    static async findByUserName(account_name) {
-        const sql = 'SELECT * FROM Profile WHERE account_name = ?';
-        const params = [account_name];
-        const foundUser = await query(sql, params);
-        return foundUser[0];
+
+    static createSellerProfile = async ({ shop_name, description, account_id }) => {
+        const sql = `INSERT INTO Seller (shop_name, description, account_id) VALUES (?, ?, ?)`;
+        const params = [shop_name, description, account_id];
+        const result = await query(sql, params);
+        return result;
     }
- 
-    static findById = async (userId) => {
-        const sql = 'SELECT * FROM Profile WHERE id = ?';
-        const params = [userId];
-        const foundUser = await query(sql, params);
-        return foundUser[0];
+
+    static async findByUsername(username) {
+        const sql = `SELECT * FROM Account WHERE account_name = ?`;
+        const params = [username];
+        const result = await query(sql, params);
+        return result;
     }
- 
+
+    static findById = async () => {
+
+    }
+
 }
- 
+
 module.exports = User;
