@@ -29,8 +29,32 @@ class User {
         return result;
     }
 
-    static findById = async () => {
+    static findById = async (id) => {
+        const sql = `SELECT * FROM Account WHERE id = ?`;
+        const params = [id];
+        const result = await query(sql, params);
+        return result;
+    }
 
+    static updateAccountInformation = async ({ id, cccd, email }) => {
+        const sql = `UPDATE Account SET cccd = ?, email = ? WHERE id = ?`;
+        const params = [cccd, email, id];
+        const result = await query(sql, params);
+        return result;
+    }
+
+    static updateProfileInformation = async ({ id, name, phone_number, date_of_birth }) => {
+        const sql = `UPDATE Profile SET name = ?, phone_number = ?, date_of_birth = ? WHERE account_id = ?`;
+        const params = [name, phone_number, date_of_birth, id];
+        const result = await query(sql, params);
+        return result;
+    }
+
+    static updateSellerInformation = async ({ id, shop_name, description }) => {
+        const sql = `UPDATE Seller SET shop_name = ?, description = ? WHERE account_id = ?`;
+        const params = [shop_name, description, id];
+        const result = await query(sql, params);
+        return result;
     }
 
 }

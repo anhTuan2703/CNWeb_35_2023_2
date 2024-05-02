@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const app_config = require('../configs/app.config');
- 
+
 class AuthMiddleware {
     static authorize = (req, res, next) => {
         const token = req.headers.authorization;
@@ -8,8 +8,8 @@ class AuthMiddleware {
             return res.status(401).json({ success: false, message: 'Unauthorized' });
         }
         try {
-            const jwt_decoded = jwt.verify(token, app_config.secret_key);
-            req.jwt_decoded = jwt_decoded;
+            const user = jwt.verify(token, app_config.secret_key);
+            req.user = user;
             return next();
         } catch (error) {
             return res.status(400).send({
@@ -19,5 +19,5 @@ class AuthMiddleware {
         }
     }
 }
- 
+
 module.exports = AuthMiddleware;

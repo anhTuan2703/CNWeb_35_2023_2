@@ -12,16 +12,16 @@ class AccessController {
                 email,
             } = req.body
             const foundUser = await User.findByUsername(account_name);
-            if(foundUser.length > 0) {
+            if (foundUser.length > 0) {
                 throw new Error('Account name already exists!')
             }
             const hashedPassword = await AuthUtil.hashPassword(password);
             const newUser = await User.createAccount({
                 account_name, password: hashedPassword, role, cccd, email
             })
-            if(newUser) {
+            if (newUser) {
                 let newProfile = null;
-                if(role === 'CUSTOMER') {
+                if (role === 'CUSTOMER') {
                     const {
                         name,
                         phone_number,
@@ -39,7 +39,7 @@ class AccessController {
                         shop_name, description, account_id: newUser.insertId
                     })
                 }
-                if(newProfile) {
+                if (newProfile) {
                     return res.status(201).json({
                         success: true,
                         message: 'Create account and profile successfully!'
@@ -59,34 +59,42 @@ class AccessController {
     }
 
     static login = async (req, res) => {
-        const {
-            account_name,
-            password
-        } = req.body;
-        const foundUser = await User.findByUsername(account_name);
-        if(foundUser.length === 0) {
-            return res.status(404).send({
+        try {
+            const {
+                account_name,
+                password
+            } = req.body;
+            const foundUser = await User.findByUsername(account_name);
+            if (foundUser.length === 0) {
+                return res.status(404).send({
+                    success: false,
+                    message: 'Account not found!'
+                })
+            }
+            const user = foundUser[0];
+            const isPasswordMatch = await AuthUtil.comparePassword(password, user.password);
+            if (!isPasswordMatch) {
+                return res.status(401).send({
+                    success: false,
+                    message: 'Invalid password!'
+                })
+            }
+            const token = AuthUtil.generateToken({
+                id: user.id,
+                role: user.role
+            });
+            return res.status(200).json({
+                success: true,
+                message: 'Login successfully!',
+                token
+            })
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send({
                 success: false,
-                message: 'Account not found!'
+                message: err.message
             })
         }
-        const user = foundUser[0];
-        const isPasswordMatch = await AuthUtil.comparePassword(password, user.password);
-        if(!isPasswordMatch) {
-            return res.status(401).send({
-                success: false,
-                message: 'Invalid password!'
-            })
-        }
-        const token = AuthUtil.generateToken({
-            id: user.id,
-            role: user.role
-        });
-        return res.status(200).json({
-            success: true,
-            message: 'Login successfully!',
-            token
-        })
     }
 }
 
