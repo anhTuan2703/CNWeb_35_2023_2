@@ -36,6 +36,45 @@ class UserController {
         }
     }
 
+    static changePassword = async (req, res) => {
+        try {
+            const foundUser = await User.findById(req.user.id);
+            if (foundUser.length === 0) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'User not found!'
+                });
+            }
+            const isMatch = await AuthUtil.comparePassword(req.body.oldPassword, foundUser[0].password);
+            if (!isMatch) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Old password is incorrect!'
+                });
+            }
+            if(req.body.newPassword !== req.body.confirmPassword) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'New password and confirm password do not match!'
+                });
+            }
+            const hashedPassword = await AuthUtil.hashPassword(req.body.newPassword);
+            await User.changePassword({
+                id: req.user.id,
+                newPassword: hashedPassword
+            });
+            res.status(200).json({
+                success: true,
+                message: 'Change password successfully!'
+            });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({
+                success: false,
+                message: err.message
+            });
+        }
+    }
 }
 
 module.exports = UserController;

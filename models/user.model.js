@@ -57,6 +57,13 @@ class User {
         return result;
     }
 
+    static async changePassword({ id, newPassword }) {
+        const sql = `UPDATE Account SET password = ? WHERE id = ?`;
+        const params = [newPassword, id];
+        const result = await query(sql, params);
+        return result;
+    }
+
 }
 
 module.exports = User;
