@@ -64,6 +64,12 @@ class User {
         return result;
     }
 
+    static findSellerByAccountId = async (id) => {
+        const sql = `SELECT * FROM Seller WHERE account_id = ?`;
+        const params = [id];
+        const result = await query(sql, params);
+        return result;
+    }
 }
 
 module.exports = User;
