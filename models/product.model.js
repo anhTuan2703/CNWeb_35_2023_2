@@ -14,6 +14,13 @@ class Product {
         const product = await query(sql, params);
         return product;
     }
+    
+    static delete = async (productId) => {
+        const sql = 'DELETE FROM Product WHERE id = ?';
+        const params = [productId];
+        const product = await query(sql, params);
+        return product;
+    }
 
 }
 
