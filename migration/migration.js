@@ -148,10 +148,3 @@ function createdTable_ItemOrder(opt){
 }
 
 createTable_Profile(true);
-createdTable_Account(true);
-createTable_Customer(true);
-createTable_Seller(true);
-createdTable_Category(true);
-createdTable_Product(true);
-createdTable_ShippingInfo(true);
-createdTable_Order(true);
