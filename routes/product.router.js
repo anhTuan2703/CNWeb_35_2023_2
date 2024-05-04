@@ -7,5 +7,6 @@ router.get('/find', ProductController.findProduct);
 router.use(AuthMiddleware.authorize)
 router.post('/create', ProductController.createProduct);
 router.post('/delete', ProductController.deleteProduct);
+router.post('/update', ProductController.updateProduct);
 
 module.exports = router;

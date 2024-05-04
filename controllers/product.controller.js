@@ -85,6 +85,55 @@ class ProductController {
         }
     }
 
+    static updateProduct = async (req, res) => {
+        try {
+            const user = await User.findById(req.user.id);
+            if (!user.length) {
+                return res.status(404).send({
+                    success: false,
+                    message: 'User not found'
+                });
+            }
+            if (user[0].role !== 'SELLER') {
+                return res.status(403).send({
+                    success: false,
+                    message: 'You are not a seller'
+                });
+            }
+            const seller = await User.findSellerByAccountId(req.user.id);
+            if (!seller.length) {
+                return res.status(404).send({
+                    success: false,
+                    message: 'Seller not found'
+                });
+            }
+            const product = await Product.findById(req.body.id);
+            if (!product.length) {
+                return res.status(404).send({
+                    success: false,
+                    message: 'Product not found'
+                });
+            }
+            if (product[0].seller_id !== seller[0].id) {
+                return res.status(403).send({
+                    success: false,
+                    message: 'You are not the owner of this product'
+                });
+            }
+            await Product.update(req.body);
+            return res.status(200).json({
+                success: true,
+                message: 'Product updated successfully'
+            });
+        } catch (err) {
+            console.log(err);
+            return res.status(400).send({
+                success: false,
+                message: err.message
+            });
+        }
+    }
+
     static findProduct = async (req, res) => {
         try {
             const product = await Product.findById(req.query.id);

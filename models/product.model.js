@@ -8,6 +8,13 @@ class Product {
         return product;
     }
 
+    static update = async ({ id, name, img, category, unit, price, description }) => {
+        const sql = 'UPDATE Product SET name = ?, img = ?, category_id = ?, unit = ?, price = ?, description = ? WHERE id = ?';
+        const params = [name, img, category, unit, price, description, id];
+        const product = await query(sql, params);
+        return product;
+    }
+
     static create = async ({ name, img, category, seller, unit, price, description, number }) => {
         const sql = 'INSERT INTO Product (name, img, category_id, seller_id, unit, price, description, number, rating, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
         const params = [name, img, category, seller, unit, price, description, number, 0, Date.now()];
