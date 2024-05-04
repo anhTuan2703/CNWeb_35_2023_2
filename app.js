@@ -1,6 +1,7 @@
 //require('./migration/migration.js')
 
 const express = require('express');
+<<<<<<< HEAD
 const { query } = require("./database/database.js")
 const app = express();
 const app_config = require('./configs/app.config');
@@ -13,6 +14,17 @@ app.use(express.json({
 app.use(express.urlencoded({
   extended: true
 }));
+=======
+const middleError = require("./middlewares/errors");
+const app = express();
+const port = 3000;
+app.use(
+	express.urlencoded({
+		extended: true,
+	}),
+);
+app.use(express.json());
+>>>>>>> 6d1d76d89615e9581876f958704e5453ccb7ea0b
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
@@ -22,6 +34,7 @@ app.listen(port, () => {
   console.log(`Server is listening at http://localhost:${port}`);
 });
 
+<<<<<<< HEAD
 app.use('/api/v1', router);
 
 (async () => {
@@ -32,3 +45,9 @@ app.use('/api/v1', router);
     console.error('Error:', error);
   }
 })();
+=======
+const orderRoute = require("./routes/order");
+app.use("/api/v1", orderRoute);
+
+app.use(middleError);
+>>>>>>> 6d1d76d89615e9581876f958704e5453ccb7ea0b
