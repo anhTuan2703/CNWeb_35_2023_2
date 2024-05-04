@@ -22,6 +22,7 @@ app.listen(port, () => {
 });
 
 const orderRoute = require("./routes/order");
+app.use("/api/v1", require("./routes/router"))
 app.use("/api/v1", orderRoute);
 
 app.use(middleError);
