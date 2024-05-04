@@ -97,7 +97,7 @@ function createdTable_Product(opt) {
 	}
 }
 function createdTable_ShippingInfo(opt){
-    const sql = `CREATE TABLE Shipping_info (
+    const sql = `CREATE TABLE IF NOT EXISTS Shipping_info (
         id INT(20) NOT NULL AUTO_INCREMENT,
         address VARCHAR(255),
         phoneNo VARCHAR(20) ,
@@ -118,6 +118,7 @@ function createdTable_Order(opt) {
         ship_price DECIMAL (13, 2),
         total_price DECIMAL (13, 2),
         ship_id INT(20),
+        orderStatus VARCHAR(255),
         created_at TIMESTAMP NOT NULL,
         FOREIGN KEY (customer_id) REFERENCES Customer(id) ON DELETE CASCADE,
         FOREIGN KEY (ship_id) REFERENCES Shipping_info(id) ON DELETE CASCADE

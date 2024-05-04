@@ -3,7 +3,7 @@ const catchErrors = require(newLocal);
 
 // check if user is authenticated or not
 exports.isAuthenticatedUser = catchErrors(async (req, res, next) => {
-	next();
+    next();
 });
 
 // Handling users roles
