@@ -83,7 +83,6 @@ exports.updateOrder = catchAsyncError(async (req, res, next) => {
 		}
 	}
 
-
 	const updateOrder = await query("SELECT * FROM orders WHERE id = ?", [id]);
 	res.status(200).json({
 		status: "success",
@@ -91,3 +90,137 @@ exports.updateOrder = catchAsyncError(async (req, res, next) => {
 	});
 });
 
+// get order detail
+exports.getOrderDetail = catchAsyncError(async (req, res, next) =>{
+	const id = req.params.orderId;
+
+	const order = await query (`SELECT * FROM Orders WHERE id = ?`, [id]);
+	if (!order) 
+		res.status(500).json({
+			status: "error",
+			massage: "Order Not Found"
+	});
+	const itemsOrder = await query (`SELECT * FROM ItemOrder WHERE order_id = ?`, [id]);
+	const shippingInfo = await query (`SELECT * FROM Shipping_Info WHERE id = ?`, [order[0].ship_id]);
+
+	const products = [];
+	for (const item of itemsOrder) {
+		// Fetch the product details for the current item
+		const product = await query(`SELECT * FROM Product WHERE id = ?`, [item.product_id]);
+		product[0].amount = item.amount;
+		const category = await query (`SELECT * FROM Category WHERE id = ?`, [product[0].id]);
+		product[0].category = category[0].name;
+		products.push(product);
+	}
+
+	products.forEach(element => {
+		console.log(element)
+	});
+
+	const responseData = {
+		id: id,
+		items_order: products.map(item => ({
+			//id: item.id,
+			name: item[0].name,
+			img: item[0].img,
+			category: item[0].category,
+			unit: item[0].unit,
+			price: item[0].price,
+			description: item[0].description,
+            amount: item[0].amount
+		})),
+		shipping_info: {
+			address: shippingInfo[0].address,
+			phoneNo: shippingInfo[0].phoneNo,
+			city: shippingInfo[0].city
+		},
+		ship_price: order[0].ship_price,
+		total_price: order[0].total_price
+	};
+
+	res.status(200).json({
+		status: "success",
+		data: responseData
+	})
+});
+
+//add product 
+exports.addProduct = catchAsyncError(async (req, res, next) =>{
+	const id = req.params.orderId;
+	const productId = req.params.productId;
+
+	const existingItem = await query(
+		"SELECT id, amount FROM itemOrder WHERE order_id = ? AND product_id = ?", 
+		[id, productId]
+	);
+	if (existingItem.length > 0 ){
+		const itemId = existingItem[0].id;
+		const amount = existingItem[0].amount;
+		const sql_udpate = 
+			"UPDATE ItemOrder SET amount = ? WHERE id = ?";
+		const params_orderItem = [amount + 1, itemId];
+		await query(sql_udpate, params_orderItem);
+
+		res.status(200).json({
+			status: "sucess",
+			massage: "Product already exist in cart, increase amount",
+		});
+	}
+
+	const now = new Date();
+	const createdAt = now.toISOString().slice(0, 19).replace('T', ' ');
+	const sql_orderItem =
+		"INSERT INTO ItemOrder (order_id, product_id, amount, created_at) VALUES (?,?,?,?)";
+	const params_orderItem = [id, productId, 1, createdAt];
+	await query(sql_orderItem, params_orderItem);
+	res.status(200).json({
+		status: "sucess",
+		massage: "Add product to cart successfully",
+	});
+});
+
+//update product amount in cart
+exports.updateProductAmount = catchAsyncError(async (req, res, next) =>{
+	const id = req.params.orderId;
+	const body = req.body;
+	console.log("hi " + body.product_id)
+	const existingItem = await query(
+		"SELECT id, amount FROM itemOrder WHERE order_id = ? AND product_id = ?", 
+		[id, body.product_id]
+	);
+
+	if (existingItem.length > 0 ){
+		const itemId = existingItem[0].id;
+		const sql_udpate = 
+			"UPDATE ItemOrder SET amount = ? WHERE id = ?";
+		const params_orderItem = [body.amount, itemId];
+		await query(sql_udpate, params_orderItem);
+		res.status(200).json({
+			status: "sucess",
+			massage: "Update Product amount successfully",
+		});
+	}
+	else{
+		res.status(200).json({
+			status: "error",
+			massage: "No Product with this id in cart",
+		});
+	}
+});
+
+//update shipping info 
+exports.updateShippingInfo = catchAsyncError(async (req, res, next) =>{
+	const id = req.params.orderId;
+	const shippingInfo = req.body.shipping_info;
+	const ship_id = (await query("SELECT ship_id FROM orders WHERE id = ?", [id]))[0].ship_id;
+    for (const key in shippingInfo) {
+        await query(
+            `UPDATE Shipping_info SET ${key}="${shippingInfo[key]}" WHERE id = ${ship_id}`,
+            [],
+        );
+    }
+	res.status(200).json({
+		status: "success",
+		massage: "Update shipping info succesfully",
+	});
+});
