@@ -3,6 +3,7 @@ const router = express.Router();
 const ProductController = require('../controllers/product.controller');
 const AuthMiddleware = require('../middlewares/auth.middleware');
 
+router.get('/:shopId/find', ProductController.findProductsByShop);
 router.get('/find', ProductController.findProduct);
 router.use(AuthMiddleware.authorize)
 router.post('/create', ProductController.createProduct);

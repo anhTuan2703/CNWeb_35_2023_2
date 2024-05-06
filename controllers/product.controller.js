@@ -154,6 +154,32 @@ class ProductController {
             });
         }
     }
+
+    static findProductsByShop = async (req, res) => {
+        try {
+            return res.status(200).json({
+                success: true,
+                products: await Product.findAll(req.params.shopId)
+            });
+        } catch (error) {
+            return res.status(400).send({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+    static changeProductNumber = async (req, res) => {
+        try {
+
+        } catch (err) {
+            console.log(err);
+            return res.status(400).send({
+                success: false,
+                message: err.message
+            });
+        }
+    }
 }
 
 module.exports = ProductController;
