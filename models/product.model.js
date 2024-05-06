@@ -8,6 +8,13 @@ class Product {
         return product;
     }
 
+    static findAll = async (shopId) => {
+        const sql = 'SELECT * FROM Product WHERE seller_id = ?';
+        const params = [shopId];
+        const product = await query(sql, params);
+        return product;
+    }
+
     static update = async ({ id, name, img, category, unit, price, description }) => {
         const sql = 'UPDATE Product SET name = ?, img = ?, category_id = ?, unit = ?, price = ?, description = ? WHERE id = ?';
         const params = [name, img, category, unit, price, description, id];
@@ -25,6 +32,13 @@ class Product {
     static delete = async (productId) => {
         const sql = 'DELETE FROM Product WHERE id = ?';
         const params = [productId];
+        const product = await query(sql, params);
+        return product;
+    }
+
+    static changeNumber = async ({ id, number }) => {
+        const sql = 'UPDATE Product SET number = ? WHERE id = ?';
+        const params = [number, id];
         const product = await query(sql, params);
         return product;
     }
