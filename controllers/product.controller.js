@@ -154,6 +154,38 @@ class ProductController {
             });
         }
     }
+
+    static getAllProduct = async (req, res) =>{
+        console.log("hi");
+        try {
+            const products =  await Product.findAll();
+            return res.status(200).json(
+                products
+            );
+        }
+        catch (error) {
+            return res.status(400).send({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+    
+    static findProductByName = async (req, res) => {
+        try {
+            console.log(req.query.q)
+            const products = await Product.findByName(req.query.q)
+            return res.status(200).json(
+                products
+            );
+        } catch (error){
+            res.status(400).send({
+                success: false,
+                massage: error.massage
+            });
+        }
+
+    }
 }
 
 module.exports = ProductController;

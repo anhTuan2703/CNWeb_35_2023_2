@@ -10,6 +10,7 @@ const {
 	getOrderDetail,
 	addProduct,
 	updateShippingInfo,
+	placedOrder,
 	getOrders,
 	updateProductAmount,
 	// getOrderById,
@@ -19,8 +20,9 @@ const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 
 //router.get("/orders", isAuthenticatedUser, authorizeRoles("admin"), getOrders);
 router.post("/order", isAuthenticatedUser, createOrder);
-router.put("/order/:id", isAuthenticatedUser, updateOrder);
+//router.put("/order/:id", isAuthenticatedUser, updateOrder);
 // router.get("/order/:id", isAuthenticatedUser, getOrderById);
+router.post("/order/place-order/:orderId", isAuthenticatedUser, placedOrder);
 router.delete("/order/:id", isAuthenticatedUser, deleteOrder);
 router.delete("/order/:orderId/product/:productId", isAuthenticatedUser, deleteItemOrder);
 router.get("/order/detail/:orderId", isAuthenticatedUser, getOrderDetail);

@@ -10,6 +10,7 @@ class Order {
 		this.shipPrice = order.ship_price || 0;
 		this.totalPrice = order.total_price ||0;
 		this.shipId = order.ship_id || null;
+		this.status = "pending";
 		// this.createdAt = order.createdAt || Date.now;
 		const now = new Date();
 		const createdAt = now.toISOString().slice(0, 19).replace('T', ' ');
@@ -60,18 +61,6 @@ class Order {
 		}
 		return this;
 	}
-
-
-	static async getOrders(query) {
-		const { skip, take } = query;
-
-		const sql =
-			"SELECT * FROM orders";
-		const res = await query(sql, [skip, take]);
-
-		return res;
-	}
-	
 }
 
 module.exports = Order;

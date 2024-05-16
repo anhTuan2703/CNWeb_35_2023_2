@@ -122,7 +122,7 @@ exports.getOrderDetail = catchAsyncError(async (req, res, next) =>{
 		items_order: products.map(item => ({
 			//id: item.id,
 			name: item[0].name,
-			img: item[0].img,
+			image: item[0].img,
 			category: item[0].category,
 			unit: item[0].unit,
 			price: item[0].price,
@@ -224,3 +224,41 @@ exports.updateShippingInfo = catchAsyncError(async (req, res, next) =>{
 		massage: "Update shipping info succesfully",
 	});
 });
+
+// place order 
+exports.placedOrder = catchAsyncError(async (req, res, next) =>{
+	const orderId = req.params.orderId;
+	const order = (await query ("SELECT * FROM orderes WHERE id = ?", [orderId]))[0];
+	const customerId = order.customer_id;
+	if (order.status == "pending"){
+		await query(`UPDATE orders SET status = 'placed' WHERE id = ${orderId}`);
+
+		const createOrderResult = await exports.createOrder({
+			body: { customer_id: customerId } 
+		});
+
+		res.status(200).json({
+			status: "success",
+			massage: "Place order succesfully"
+		});
+	}
+	res.status(400).json({
+		status: "not success",
+		massage: "Place order failed"
+	});
+
+});
+
+// get all placed order: 
+exports.getAllPlacedOrders = catchAsyncError(async  (req, res, next) =>{
+	const customerId = req.params.customer_id;
+	const placedOrders = (await query("SELECT * FROM orders WHERE customer_id = ? AND status = 'placed'", [customerId]));
+});
+//get current order id 
+exports.getCurrentOrderId = catchAsyncError(async (req, res, next) =>{
+	const customerId = req.params.customer_id;
+	const currnentOrder = (await query("SELECT id FROM orders WHERE customer_id = ? AND status = 'pending'", [customerId]));
+	res.status(200).json({
+		orderId: currnentOrder
+	})
+})

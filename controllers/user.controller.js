@@ -5,24 +5,24 @@ class UserController {
     static changeInformation = async (req, res) => {
         try {
             await User.updateAccountInformation({
-                id: req.user.id,
+                id: req.body.userID,
                 cccd: req.body.cccd,
                 email: req.body.email
             });
-            if (req.user.role === 'CUSTOMER') {
+            //if (req.user.role === 'CUSTOMER') {
                 await User.updateProfileInformation({
-                    id: req.user.id,
+                    id: req.body.userID,
                     name: req.body.name,
                     phone_number: req.body.phone_number,
                     date_of_birth: req.body.date_of_birth
                 });
-            } else {
-                await User.updateSellerInformation({
-                    id: req.user.id,
-                    shop_name: req.body.shop_name,
-                    description: req.body.description
-                });
-            }
+            // } else {
+            //     await User.updateSellerInformation({
+            //         id: req.body.userID,
+            //         shop_name: req.body.shop_name,
+            //         description: req.body.description
+            //     });
+            // }
             res.status(200).json({
                 success: true,
                 message: 'Change information successfully!'
@@ -38,7 +38,8 @@ class UserController {
 
     static changePassword = async (req, res) => {
         try {
-            const foundUser = await User.findById(req.user.id);
+            console.log(req.body)
+            const foundUser = await User.findById(req.body.userID);
             if (foundUser.length === 0) {
                 return res.status(404).json({
                     success: false,
@@ -60,7 +61,7 @@ class UserController {
             }
             const hashedPassword = await AuthUtil.hashPassword(req.body.newPassword);
             await User.changePassword({
-                id: req.user.id,
+                id: req.body.userID,
                 newPassword: hashedPassword
             });
             res.status(200).json({
@@ -74,6 +75,10 @@ class UserController {
                 message: err.message
             });
         }
+    }
+
+    static getUserInfomation = async(req, res) => {
+
     }
 }
 

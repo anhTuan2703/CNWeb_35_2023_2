@@ -2,9 +2,14 @@ const { query } = require('../database/database.js');
 
 class User {
     static createAccount = async ({ account_name, password, role, cccd, email }) => {
+        // const now = new Date();
+		// const createdAt = now.toISOString().slice(0, 19).replace('T', ' ');
+		// this.createdAt = createdAt;
+        console.log("register");        
         const sql = `INSERT INTO Account (account_name, password, role, cccd, email, created_at) VALUES (?, ?, ?, ?, ?, ?)`;
-        const params = [account_name, password, role, cccd, email, Date.now()];
+        const params = [account_name, password, role, cccd, email, now.toISOString().slice(0, 19).replace('T', ' ')];
         const result = await query(sql, params);
+
         return result;
     }
 

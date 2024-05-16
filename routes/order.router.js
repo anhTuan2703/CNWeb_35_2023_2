@@ -7,18 +7,26 @@ const {
 	updateOrder,
 	deleteOrder,
 	deleteItemOrder,
+	purchasedOrder,
 	getOrders,
 	// getOrderById,
 	// getUserOrders,
 } = require("../controllers/order.controller");
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
+const AuthMiddleware = require('../middlewares/auth.middleware');
 
 //router.get("/orders", isAuthenticatedUser, authorizeRoles("admin"), getOrders);
-router.post("/order", isAuthenticatedUser, createOrder);
-router.put("/order/:id", isAuthenticatedUser, updateOrder);
-// router.get("/order/:id", isAuthenticatedUser, getOrderById);
-router.delete("/order/:id", isAuthenticatedUser, deleteOrder);
-router.delete("/order/:orderId/product/:productId", isAuthenticatedUser, deleteItemOrder);
+
+
+
+router.use(AuthMiddleware.authorize);
+
+
+router.post("/order", createOrder);
+router.put("/order/:id", updateOrder);
+router.get("/order/place-order/:orderId", getOrderById);
+router.delete("/order/:id", deleteOrder);
+router.delete("/order/:orderId/product/:productId", deleteItemOrder);
 //router.get("/user/orders", isAuthenticatedUser, getUserOrders);
 
 module.exports = router;

@@ -1,38 +1,43 @@
 const { query } = require("../database/database.js");
 
-function createTable_Profile(opt) {
-	const sql = `CREATE TABLE IF NOT EXISTS Profile (
-        id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        name VARCHAR(255) NOT NULL,
-        CCCD VARCHAR(255),
-        email VARCHAR(255) NOT NULL,
-        phone_number VARCHAR(255) NOT NULL,
-        date_of_birth TIMESTAMP NOT NULL,
-        role ENUM('CUSTOMER', 'SELLER')
-      );
-      `;
-	if (opt === true) {
-		query(sql);
-        setTimeout(() => console.log("create table profile"), 500);
-		setTimeout(() => createdTable_Account(opt), 2000);
-	}
-}
 function createdTable_Account(opt) {
 	const sql = `CREATE TABLE IF NOT EXISTS Account (
         id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        profile_id INT(20) NOT NULL,
         account_name VARCHAR(255) NOT NULL,
         password VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP NOT NULL,
-        FOREIGN KEY (profile_id) REFERENCES Profile(id) ON DELETE CASCADE
+        role ENUM('CUSTOMER', 'SELLER'),
+        CCCD VARCHAR(255),
+        email VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP NOT NULL
     );    
     `;
 	if (opt === true) {
 		query(sql);
         setTimeout(() => console.log("create table account"), 500);
+        setTimeout(() => createTable_Profile(opt), 2000);
+	}
+}
+
+function createTable_Profile(opt) {
+	const sql = `CREATE TABLE IF NOT EXISTS Profile (
+        id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        name VARCHAR(255) NOT NULL,
+        account_id INT(20) NOT NULL,
+        CCCD VARCHAR(255),
+        email VARCHAR(255) NOT NULL,
+        phone_number VARCHAR(255) NOT NULL,
+        date_of_birth TIMESTAMP NOT NULL,
+        role ENUM('CUSTOMER', 'SELLER'),
+        FOREIGN KEY (account_id) REFERENCES Account(id) ON DELETE CASCADE
+      );
+      `;
+	if (opt === true) {
+		query(sql);
+        setTimeout(() => console.log("create table profile"), 500);
 		setTimeout(() => createTable_Customer(opt), 2000);
 	}
 }
+
 function createTable_Customer(opt){
     const sql = `CREATE TABLE IF NOT EXISTS Customer (
         id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -115,6 +120,7 @@ function createdTable_Order(opt) {
 	const sql = `CREATE TABLE IF NOT EXISTS Orders (
         id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
         customer_id INT(20) NOT NULL,
+        status VARCHAR(255),
         ship_price DECIMAL (13, 2),
         total_price DECIMAL (13, 2),
         ship_id INT(20),
@@ -126,7 +132,7 @@ function createdTable_Order(opt) {
     `;
 	if (opt === true) {
 		query(sql);
-        setTimeout(() => console.log("create table order"), 500);
+        //setTimeout(() => console.log("create table order"), 500);
 		setTimeout(() => createdTable_ItemOrder(opt), 2000);
 	}
 }
@@ -147,4 +153,4 @@ function createdTable_ItemOrder(opt){
 	}
 }
 
-createTable_Profile(true);
+createdTable_Account(true);

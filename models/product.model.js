@@ -8,6 +8,25 @@ class Product {
         return product;
     }
 
+    static findByName = async (searchTerm) => {
+        const products = await query(`
+            SELECT 
+                Product.id,
+                Product.name,
+                Category.name AS category,
+                Product.img AS image,
+                Product.unit,
+                Product.price,
+                Product.description,
+                Product.number,
+                Product.rating
+            FROM Product
+            LEFT JOIN Category ON Product.category_id = Category.id
+            WHERE Product.name LIKE '%${searchTerm}%'
+        `);
+        return products;
+    }
+
     static update = async ({ id, name, img, category, unit, price, description }) => {
         const sql = 'UPDATE Product SET name = ?, img = ?, category_id = ?, unit = ?, price = ?, description = ? WHERE id = ?';
         const params = [name, img, category, unit, price, description, id];
@@ -28,6 +47,27 @@ class Product {
         const product = await query(sql, params);
         return product;
     }
+
+    static findAll = async() =>{
+        const sql =            
+                `SELECT 
+                Product.id,
+                Product.name,
+                Category.name AS category,
+                Product.img AS image,
+                Product.unit,
+                Product.price,
+                Product.description,
+                Product.number,
+                Product.rating
+            FROM Product
+            LEFT JOIN Category ON Product.category_id = Category.id`;
+
+        const products = await query(sql);
+        console.log(products.length);
+        return products;
+    }
+
 
 }
 
