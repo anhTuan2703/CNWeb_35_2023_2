@@ -92,15 +92,20 @@ exports.updateOrder = catchAsyncError(async (req, res, next) => {
 
 // get order detail
 exports.getOrderDetail = catchAsyncError(async (req, res, next) =>{
-	const id = req.params.orderId;
+	//const id = req.params.orderId;
+	const userId = req.body.customer_id;
 
-	const order = await query (`SELECT * FROM Orders WHERE id = ?`, [id]);
+	const orderId = await query (`SELECT id FROM Orders WHERE customer_id = ? and status = 'pending'`, [userId])[0].id;
+	console.log(userId)	
+	const order = await query (`SELECT * FROM Orders WHERE id = ?`, [orderId])[0];
+	
 	if (!order) 
 		res.status(500).json({
 			status: "error",
-			massage: "Order Not Found"
+			massage: "Order Not Found" + orderId
 	});
-	const itemsOrder = await query (`SELECT * FROM ItemOrder WHERE order_id = ?`, [id]);
+
+	const itemsOrder = await query (`SELECT * FROM ItemOrder WHERE order_id = ?`, [orderId]);
 	const shippingInfo = await query (`SELECT * FROM Shipping_Info WHERE id = ?`, [order[0].ship_id]);
 
 	const products = [];
@@ -118,7 +123,7 @@ exports.getOrderDetail = catchAsyncError(async (req, res, next) =>{
 	});
 
 	const responseData = {
-		id: id,
+		id: orderId,
 		items_order: products.map(item => ({
 			//id: item.id,
 			name: item[0].name,

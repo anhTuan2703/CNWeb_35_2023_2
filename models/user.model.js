@@ -1,13 +1,13 @@
 const { query } = require('../database/database.js');
 
 class User {
-    static createAccount = async ({ account_name, password, role, cccd, email }) => {
+    static createAccount = async ({ account_name, password, name, cccd, email, phone_number, date_of_birth }) => {
         // const now = new Date();
 		// const createdAt = now.toISOString().slice(0, 19).replace('T', ' ');
 		// this.createdAt = createdAt;
-        console.log("register");        
-        const sql = `INSERT INTO Account (account_name, password, role, cccd, email, created_at) VALUES (?, ?, ?, ?, ?, ?)`;
-        const params = [account_name, password, role, cccd, email, now.toISOString().slice(0, 19).replace('T', ' ')];
+        console.log("register");   
+        const sql = `INSERT INTO Account (account_name, password, name, cccd, email, phone_number, date_of_birth, created_at) VALUES (?, ?, ?, ?, ?, ?)`;
+        const params = [account_name, password, name, cccd, email, phone_number, date_of_birth, now.toISOString().slice(0, 19).replace('T', ' ')];
         const result = await query(sql, params);
 
         return result;
@@ -41,10 +41,11 @@ class User {
         return result;
     }
 
-    static updateAccountInformation = async ({ id, cccd, email }) => {
-        const sql = `UPDATE Account SET cccd = ?, email = ? WHERE id = ?`;
-        const params = [cccd, email, id];
+    static updateAccountInformation = async ({ id, cccd, email, name, phone_number, date_of_birth }) => {
+        const sql = `UPDATE Account SET cccd = ?, email = ?, name = ?, phone_number = ?, date_of_birth = ? WHERE id = ?`;
+        const params = [cccd, email, name, phone_number, date_of_birth, id];
         const result = await query(sql, params);
+        console.log("update: " + name)
         return result;
     }
 
@@ -71,6 +72,13 @@ class User {
 
     static findSellerByAccountId = async (id) => {
         const sql = `SELECT * FROM Seller WHERE account_id = ?`;
+        const params = [id];
+        const result = await query(sql, params);
+        return result;
+    }
+
+    static findAccountById = async(id) => {
+        const sql = `SELECT * FROM Account WHERE id = ?`;
         const params = [id];
         const result = await query(sql, params);
         return result;

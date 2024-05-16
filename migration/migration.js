@@ -5,67 +5,21 @@ function createdTable_Account(opt) {
         id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
         account_name VARCHAR(255) NOT NULL,
         password VARCHAR(255) NOT NULL,
-        role ENUM('CUSTOMER', 'SELLER'),
+        name VARCHAR(255) NOT NULL,
         CCCD VARCHAR(255),
         email VARCHAR(255) NOT NULL,
+        phone_number VARCHAR(50) NOT NULL,
+        date_of_birth TIMESTAMP NOT NULL,
         created_at TIMESTAMP NOT NULL
     );    
     `;
 	if (opt === true) {
 		query(sql);
         setTimeout(() => console.log("create table account"), 500);
-        setTimeout(() => createTable_Profile(opt), 2000);
+        setTimeout(() => createdTable_Category(opt), 2000);
 	}
 }
 
-function createTable_Profile(opt) {
-	const sql = `CREATE TABLE IF NOT EXISTS Profile (
-        id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        name VARCHAR(255) NOT NULL,
-        account_id INT(20) NOT NULL,
-        CCCD VARCHAR(255),
-        email VARCHAR(255) NOT NULL,
-        phone_number VARCHAR(255) NOT NULL,
-        date_of_birth TIMESTAMP NOT NULL,
-        role ENUM('CUSTOMER', 'SELLER'),
-        FOREIGN KEY (account_id) REFERENCES Account(id) ON DELETE CASCADE
-      );
-      `;
-	if (opt === true) {
-		query(sql);
-        setTimeout(() => console.log("create table profile"), 500);
-		setTimeout(() => createTable_Customer(opt), 2000);
-	}
-}
-
-function createTable_Customer(opt){
-    const sql = `CREATE TABLE IF NOT EXISTS Customer (
-        id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        account_id INT(20) NOT NULL,
-        FOREIGN KEY (account_id) REFERENCES Account(id) ON DELETE CASCADE
-    );
-    `;
-    if (opt === true) {
-		query(sql);
-        setTimeout(() => console.log("create table customer"), 500);
-		setTimeout(() => createTable_Seller(opt), 2000);
-	}
-}
-function createTable_Seller(opt){
-    const sql = `CREATE TABLE IF NOT EXISTS Seller (
-        id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-        shop_name TEXT,
-        description TEXT,
-        account_id INT(20) NOT NULL,
-        FOREIGN KEY (account_id) REFERENCES Account(id) ON DELETE CASCADE
-    );    
-    `;
-    if (opt === true) {
-		query(sql);
-        setTimeout(() => console.log("create table seller"), 500);
-		setTimeout(() => createdTable_Category(opt), 2000);
-	}
-}
 function createdTable_Category(opt) {
 	const sql = `CREATE TABLE IF NOT EXISTS Category (
         id INT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -84,15 +38,13 @@ function createdTable_Product(opt) {
         name VARCHAR(255) NOT NULL,
         img VARCHAR(255),
         category_id INT(20),
-        seller_id INT(20),
         unit VARCHAR(50),
         price BIGINT,
         description TEXT,
         number INT,
         rating FLOAT,
         created_at TIMESTAMP NOT NULL,
-        FOREIGN KEY (category_id) REFERENCES Category(id) ON DELETE CASCADE,
-        FOREIGN KEY (seller_id) REFERENCES Seller(id) ON DELETE CASCADE
+        FOREIGN KEY (category_id) REFERENCES Category(id) ON DELETE CASCADE
     );    
     `;
 	if (opt === true) {
@@ -124,9 +76,8 @@ function createdTable_Order(opt) {
         ship_price DECIMAL (13, 2),
         total_price DECIMAL (13, 2),
         ship_id INT(20),
-        orderStatus VARCHAR(255),
         created_at TIMESTAMP NOT NULL,
-        FOREIGN KEY (customer_id) REFERENCES Customer(id) ON DELETE CASCADE,
+        FOREIGN KEY (customer_id) REFERENCES Account(id) ON DELETE CASCADE,
         FOREIGN KEY (ship_id) REFERENCES Shipping_info(id) ON DELETE CASCADE
     );
     `;

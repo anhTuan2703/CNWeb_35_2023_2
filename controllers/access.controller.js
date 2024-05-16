@@ -8,9 +8,11 @@ class AccessController {
             const {
                 account_name,
                 password,
-                role,
+                name,
                 cccd,
                 email,
+                phone_number,
+                date_of_birth,
             } = req.body
             const foundUser = await User.findByUsername(account_name);
             if (foundUser.length > 0) {
@@ -18,39 +20,39 @@ class AccessController {
             }
             const hashedPassword = await AuthUtil.hashPassword(password);
             const newUser = await User.createAccount({
-                account_name, password: hashedPassword, role, cccd, email
+                account_name, password: hashedPassword, name, cccd, email, phone_number, date_of_birth
             })
-            if (newUser) {
-                let newProfile = null;
-                if (role === 'CUSTOMER') {
-                    const {
-                        name,
-                        phone_number,
-                        dob
-                    } = req.body
-                    newProfile = await User.createProfile({
-                        name, account_id: newUser.insertId, phone_number, dob
-                    })
-                } else {
-                    const {
-                        shop_name,
-                        description
-                    } = req.body
-                    newProfile = await User.createSellerProfile({
-                        shop_name, description, account_id: newUser.insertId
-                    })
-                }
-                if (newProfile) {
-                    return res.status(201).json({
-                        success: true,
-                        message: 'Create account and profile successfully!'
-                    })
-                } else {
-                    throw new Error('Create profile failed!')
-                }
-            } else {
-                throw new Error('Create account failed!')
-            }
+            // if (newUser) {
+            //     let newProfile = null;
+            //     if (role === 'CUSTOMER') {
+            //         const {
+            //             name,
+            //             phone_number,
+            //             dob
+            //         } = req.body
+            //         newProfile = await User.createProfile({
+            //             name, account_id: newUser.insertId, phone_number, dob
+            //         })
+            //     } else {
+            //         const {
+            //             shop_name,
+            //             description
+            //         } = req.body
+            //         newProfile = await User.createSellerProfile({
+            //             shop_name, description, account_id: newUser.insertId
+            //         })
+            //     }
+            //     if (newProfile) {
+            //         return res.status(201).json({
+            //             success: true,
+            //             message: 'Create account and profile successfully!'
+            //         })
+            //     } else {
+            //         throw new Error('Create profile failed!')
+            //     }
+            // } else {
+            //     throw new Error('Create account failed!')
+            // }
         } catch (err) {
             return res.status(500).send({
                 success: false,

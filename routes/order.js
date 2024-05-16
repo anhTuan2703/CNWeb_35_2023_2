@@ -29,6 +29,7 @@ router.get("/order/detail/:orderId", isAuthenticatedUser, getOrderDetail);
 router.post("/order/:orderId/product/:productId", isAuthenticatedUser, addProduct);
 router.put("/order/updateItem/:orderId", isAuthenticatedUser, updateProductAmount);
 router.put("/order/shippingInfo/:orderId", isAuthenticatedUser, updateShippingInfo);
+router.get("/order/details", getOrderDetail);
 //router.get("/user/orders", isAuthenticatedUser, getUserOrders);
 
 module.exports = router;

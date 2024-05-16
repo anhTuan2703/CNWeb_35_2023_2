@@ -7,15 +7,18 @@ class UserController {
             await User.updateAccountInformation({
                 id: req.body.userID,
                 cccd: req.body.cccd,
-                email: req.body.email
+                email: req.body.email,
+                name: req.body.name,
+                phone_number: req.body.phone_number,
+                date_of_birth: req.body.date_of_birth
             });
             //if (req.user.role === 'CUSTOMER') {
-                await User.updateProfileInformation({
-                    id: req.body.userID,
-                    name: req.body.name,
-                    phone_number: req.body.phone_number,
-                    date_of_birth: req.body.date_of_birth
-                });
+                // await User.updateProfileInformation({
+                //     id: req.body.userID,
+                //     name: req.body.name,
+                //     phone_number: req.body.phone_number,
+                //     date_of_birth: req.body.date_of_birth
+                // });
             // } else {
             //     await User.updateSellerInformation({
             //         id: req.body.userID,
@@ -78,7 +81,18 @@ class UserController {
     }
 
     static getUserInfomation = async(req, res) => {
-
+            const accountId = req.body.account_id;
+            console.log("change info")
+;            const data = await User.findAccountById(accountId)
+            if (data){
+                res.status(200).json(data)
+            }
+            else{
+                res.status(500).json({
+                    success: false,
+                    message: "No user was found!"
+                })
+            }
     }
 }
 
