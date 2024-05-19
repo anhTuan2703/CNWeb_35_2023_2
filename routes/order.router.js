@@ -16,7 +16,7 @@ const {
 const { isAuthenticatedUser, authorizeRoles } = require("../middlewares/auth");
 const AuthMiddleware = require('../middlewares/auth.middleware');
 
-router.get("/orders", isAuthenticatedUser, authorizeRoles("admin"), getOrders);
+//router.get("/orders", isAuthenticatedUser, authorizeRoles("admin"), getOrders);
 
 
 

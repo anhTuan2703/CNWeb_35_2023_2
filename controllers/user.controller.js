@@ -5,7 +5,7 @@ class UserController {
     static changeInformation = async (req, res) => {
         try {
             await User.updateAccountInformation({
-                id: req.body.userID,
+                id: req.body.customer_id,
                 cccd: req.body.cccd,
                 email: req.body.email,
                 name: req.body.name,

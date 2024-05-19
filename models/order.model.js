@@ -13,20 +13,24 @@ class Order {
 		this.status = "pending";
 		// this.createdAt = order.createdAt || Date.now;
 		const now = new Date();
-		const createdAt = now.toISOString().slice(0, 19).replace('T', ' ');
-		this.createdAt = createdAt;
+		this.createdAt = now.toISOString().slice(0, 19).replace('T', ' ');
 	}
 	// create new order
 	async createOrder() {
-		if (this.itemsOrder.length < 1)
-			return new ErrorHandler("Dont have any order items", 401);
+		 if (this.itemsOrder.length < 1){
+		 	this.itemsOrder = []			
+		 }
+		if (this.shippingInfo == null){
+			this.shippingInfo = {}
+		}
+		this.shipPrice = this.shipPrice == null ? 0 : this.shipPrice;
+		this.totalPrice = this.totalPrice == null ? 0 : this.totalPrice;
+
 
 		let address = "", phoneNo = "", city = "";
-		if (this.shippingInfo != null){
-			address = this.shippingInfo.address;
-			phoneNo = this.shippingInfo.phoneNo;
-			city = this.shippingInfo.city;
-		}
+		address = this.shippingInfo.address;
+		phoneNo = this.shippingInfo.phoneNo;
+		city = this.shippingInfo.city;
 
 		const sql_shipping =
 			"INSERT INTO Shipping_info (address, phoneNo, city) VALUES (?, ?, ?)";
@@ -40,12 +44,13 @@ class Order {
 		
 
 		const sql_order =
-			"INSERT INTO Orders (customer_id, ship_price, total_price, ship_id, created_at) VALUES (?, ?, ?, ?, ?)";
+			"INSERT INTO Orders (customer_id, ship_price, total_price, ship_id, status, created_at) VALUES (?, ?, ?, ?, ?, ?)";
 		const params_order = [
 			this.customerId,
-			this.shipPrice,
-			this.totalPrice,
+			this.shipPrice ||0,
+			this.totalPrice || 0,
 			this.shippingInfo.id,
+			'pending',			
 			this.createdAt,
 		];
 		const res_order = await query(sql_order, params_order);

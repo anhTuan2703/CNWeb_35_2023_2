@@ -2,11 +2,11 @@ const { query } = require('../database/database.js');
 
 class User {
     static createAccount = async ({ account_name, password, name, cccd, email, phone_number, date_of_birth }) => {
-        // const now = new Date();
+        const now = new Date();
 		// const createdAt = now.toISOString().slice(0, 19).replace('T', ' ');
 		// this.createdAt = createdAt;
-        console.log("register");   
-        const sql = `INSERT INTO Account (account_name, password, name, cccd, email, phone_number, date_of_birth, created_at) VALUES (?, ?, ?, ?, ?, ?)`;
+
+        const sql = `INSERT INTO Account (account_name, password, name, cccd, email, phone_number, date_of_birth, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
         const params = [account_name, password, name, cccd, email, phone_number, date_of_birth, now.toISOString().slice(0, 19).replace('T', ' ')];
         const result = await query(sql, params);
 
@@ -45,8 +45,8 @@ class User {
         const sql = `UPDATE Account SET cccd = ?, email = ?, name = ?, phone_number = ?, date_of_birth = ? WHERE id = ?`;
         const params = [cccd, email, name, phone_number, date_of_birth, id];
         const result = await query(sql, params);
-        console.log("update: " + name)
-        return result;
+        console.log(id)
+        return result; 
     }
 
     static updateProfileInformation = async ({ id, name, phone_number, date_of_birth }) => {

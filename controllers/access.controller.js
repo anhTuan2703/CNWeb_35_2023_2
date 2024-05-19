@@ -1,10 +1,11 @@
 const User = require('../models/user.model');
 const AuthUtil = require('../utils/auth.util');
+const Order = require("../models/order.model");
 
 class AccessController {
     static register = async (req, res) => {
-        console.log(req.body)
-;        try {
+        //console.log(req.body)
+        try {
             const {
                 account_name,
                 password,
@@ -18,9 +19,18 @@ class AccessController {
             if (foundUser.length > 0) {
                 throw new Error('Account name already exists!')
             }
+            console.log(date_of_birth)
             const hashedPassword = await AuthUtil.hashPassword(password);
             const newUser = await User.createAccount({
                 account_name, password: hashedPassword, name, cccd, email, phone_number, date_of_birth
+            })
+            const customerId = newUser.insertId;
+            const order = new Order({customer_id: customerId})
+            const newOrder = await order.createOrder();
+
+            res.status(200).json({
+                success: true,
+                message: "Create account successfully"
             })
             // if (newUser) {
             //     let newProfile = null;
