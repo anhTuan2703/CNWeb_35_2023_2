@@ -1,4 +1,5 @@
 //require('./migration/migration.js')
+// Import the Nodemailer library
 const cors = require('cors');
 const express = require('express');
 const morgan = require('morgan')
@@ -31,3 +32,5 @@ app.use("/api/v1", require("./routes/router"))
 app.use("/api/v1", orderRoute);
 
 app.use(middleError);
+
+

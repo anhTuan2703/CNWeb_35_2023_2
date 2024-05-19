@@ -1,7 +1,7 @@
 const User = require('../models/user.model');
 const AuthUtil = require('../utils/auth.util');
 const Order = require("../models/order.model");
-
+const Notify = require("./sendmail.controller");
 class AccessController {
     static register = async (req, res) => {
         //console.log(req.body)
@@ -28,6 +28,12 @@ class AccessController {
             const order = new Order({customer_id: customerId})
             const newOrder = await order.createOrder();
 
+            const targetMail = "vituan121002@gmail.com";
+            const mailContent = {
+                subject: "Welcome to group 35",
+                content: "You've created an account in our web, hope you enjoy it."
+            }
+            Notify(targetMail, mailContent);
             res.status(200).json({
                 success: true,
                 message: "Create account successfully"

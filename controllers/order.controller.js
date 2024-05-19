@@ -1,6 +1,7 @@
 const Order = require("../models/order.model");
 const catchAsyncError = require("../middlewares/catchAsyncErrors");
 const { query } = require("../database/database");
+const Notify = require("./sendmail.controller");
 //const Product = require("../models/product.model");
 //const User = require("../models/user.model");
 
@@ -197,6 +198,13 @@ exports.placedOrder = catchAsyncError(async (req, res, next) =>{
 		} catch (err) {
 			console.log(err);
 		}
+
+		const targetMail = "vituan121002@gmail.com";
+		const mailContent = {
+			subject: "Group 35",
+			content: "You've placed an order, check it!"
+		}
+		Notify(targetMail, mailContent);
 		res.status(200).json({
 			success: true,
 			massage: "Place order succesfully"
