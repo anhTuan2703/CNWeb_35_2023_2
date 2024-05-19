@@ -164,6 +164,7 @@ class ProductController {
             );
         }
         catch (error) {
+
             return res.status(400).send({
                 success: false,
                 message: error.message
@@ -182,6 +183,20 @@ class ProductController {
             res.status(400).send({
                 success: false,
                 massage: error.massage
+            });
+        }
+    }
+
+
+
+    static changeProductNumber = async (req, res) => {
+        try {
+
+        } catch (err) {
+            console.log(err);
+            return res.status(400).send({
+                success: false,
+                message: err.message
             });
         }
 
