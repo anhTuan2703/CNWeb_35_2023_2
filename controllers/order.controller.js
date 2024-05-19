@@ -124,16 +124,20 @@ exports.getOrderDetail = catchAsyncError(async (req, res, next) =>{
 	const itemsOrderQuery = await query (`SELECT * FROM ItemOrder WHERE order_id = ?`, [orderId]);
 	const products = [];
 
-	let items_order
+	let items_order;
 	if (itemsOrderQuery){
 		for (const item of itemsOrderQuery) {
 			// Fetch the product details for the current item
+
 			const product = await query(`SELECT * FROM Product WHERE id = ?`, [item.product_id]);
+			// console.log("order details " + item.product_id +" " + product[0].id)				
 			product[0].amount = item.amount;
-			const category = await query (`SELECT * FROM Category WHERE id = ?`, [product[0].id]);
+			const category = await query (`SELECT * FROM Category WHERE id = ?`, [product[0].category_id]);
 			product[0].category = category[0].name;
 			products.push(product);
+		
 		}
+		
 		items_order = products.map(item => ({
 				id: item[0].id,
 				name: item[0].name,
@@ -204,7 +208,7 @@ exports.placedOrder = catchAsyncError(async (req, res, next) =>{
 			subject: "Group 35",
 			content: "You've placed an order, check it!"
 		}
-		Notify(targetMail, mailContent);
+		await Notify(targetMail, mailContent);
 		res.status(200).json({
 			success: true,
 			massage: "Place order succesfully"

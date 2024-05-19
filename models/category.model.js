@@ -7,6 +7,12 @@ class Category {
         const result = await query(sql);
         return result;
     }
+
+    static createCategory = async (cateName) => {
+        const sql = `INSERT INTO Category (name) VALUES ('${cateName}')`;
+        const result = await query(sql);
+        return result;
+    }
 }
 
 module.exports = Category;

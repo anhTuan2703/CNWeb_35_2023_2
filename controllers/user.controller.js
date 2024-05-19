@@ -12,20 +12,6 @@ class UserController {
                 phone_number: req.body.phone_number,
                 date_of_birth: req.body.date_of_birth
             });
-            //if (req.user.role === 'CUSTOMER') {
-                // await User.updateProfileInformation({
-                //     id: req.body.userID,
-                //     name: req.body.name,
-                //     phone_number: req.body.phone_number,
-                //     date_of_birth: req.body.date_of_birth
-                // });
-            // } else {
-            //     await User.updateSellerInformation({
-            //         id: req.body.userID,
-            //         shop_name: req.body.shop_name,
-            //         description: req.body.description
-            //     });
-            // }
             res.status(200).json({
                 success: true,
                 message: 'Change information successfully!'
@@ -81,9 +67,9 @@ class UserController {
     }
 
     static getUserInfomation = async(req, res) => {
-            const accountId = req.body.account_id;
-            console.log("change info")
-;            const data = await User.findAccountById(accountId)
+            const userId = req.params.user_id;
+            console.log("change info");
+            const data = await User.findAccountById(userId)
             if (data){
                 res.status(200).json(data)
             }
