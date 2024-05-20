@@ -43,6 +43,8 @@ class Product {
     }
 
     static create = async ({ name, img, category, unit, price, description, number }) => {
+
+
         const now = new Date();
 		const createdAt = now.toISOString().slice(0, 19).replace('T', ' ');
         const sql = 'INSERT INTO Product (name, img, category_id, unit, price, description, number, rating, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';

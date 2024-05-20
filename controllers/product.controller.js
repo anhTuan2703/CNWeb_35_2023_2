@@ -25,6 +25,16 @@ class ProductController {
             //         message: 'Seller not found'
             //     });
             // }
+            
+            const existing= (await query(`SELECT * FROM Product WHERE name = '${req.body.name.trim()}'`))
+            console.log(existing)
+            if (existing > 0){
+                return res.status(201).send({
+                    success: false,
+                    message: 'Product is already exist in database'
+                })
+            }
+            console.log("heeeeee")
             await Product.create({ ...req.body});
             return res.status(201).send({
                 success: true,

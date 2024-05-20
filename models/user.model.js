@@ -42,8 +42,8 @@ class User {
     }
 
     static updateAccountInformation = async ({ id, cccd, email, name, phone_number, date_of_birth }) => {
-        const sql = `UPDATE Account SET cccd = ?, email = ?, name = ?, phone_number = ?, date_of_birth = ? WHERE id = ?`;
-        const params = [cccd, email, name, phone_number, date_of_birth, id];
+        const sql = `UPDATE Account SET cccd = ?, email = ?, name = ?, phone_number = ? WHERE id = ?`;
+        const params = [cccd, email, name, phone_number, id];
         const result = await query(sql, params);
         console.log(id)
         return result; 

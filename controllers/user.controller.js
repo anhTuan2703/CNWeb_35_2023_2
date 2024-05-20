@@ -4,13 +4,14 @@ const AuthUtil = require('../utils/auth.util');
 class UserController {
     static changeInformation = async (req, res) => {
         try {
+            // console.log(req.body)
+            // console.log(req.params.customerID)
             await User.updateAccountInformation({
                 id: req.body.customer_id,
-                cccd: req.body.cccd,
+                cccd: req.body.CCCD,
                 email: req.body.email,
                 name: req.body.name,
                 phone_number: req.body.phone_number,
-                date_of_birth: req.body.date_of_birth
             });
             res.status(200).json({
                 success: true,
@@ -71,7 +72,7 @@ class UserController {
             console.log("change info");
             const data = await User.findAccountById(userId)
             if (data){
-                res.status(200).json(data)
+                res.status(200).json(data[0])
             }
             else{
                 res.status(500).json({
