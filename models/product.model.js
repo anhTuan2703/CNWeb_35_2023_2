@@ -42,9 +42,11 @@ class Product {
         return product;
     }
 
-    static create = async ({ name, img, category, seller, unit, price, description, number }) => {
-        const sql = 'INSERT INTO Product (name, img, category_id, seller_id, unit, price, description, number, rating, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        const params = [name, img, category, seller, unit, price, description, number, 0, Date.now()];
+    static create = async ({ name, img, category, unit, price, description, number }) => {
+        const now = new Date();
+		const createdAt = now.toISOString().slice(0, 19).replace('T', ' ');
+        const sql = 'INSERT INTO Product (name, img, category_id, unit, price, description, number, rating, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        const params = [name, img, category, unit, price, description, number, 0, createdAt];
         const product = await query(sql, params);
         return product;
     }

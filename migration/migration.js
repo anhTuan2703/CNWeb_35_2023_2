@@ -10,6 +10,7 @@ function createdTable_Account(opt) {
         email VARCHAR(255) NOT NULL,
         phone_number VARCHAR(50) NOT NULL,
         date_of_birth TIMESTAMP NOT NULL,
+        role enum("admin", "user"),
         created_at TIMESTAMP NOT NULL
     );    
     `;

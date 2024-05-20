@@ -1,30 +1,31 @@
 const Product = require('../models/product.model');
 const User = require('../models/user.model');
+const { query } = require('../database/database.js');
 
 class ProductController {
     static createProduct = async (req, res) => {
         try {
-            const user = await User.findById(req.user.id);
-            if (!user.length) {
-                return res.status(404).send({
-                    success: false,
-                    message: 'User not found'
-                });
-            }
-            if (user[0].role !== 'SELLER') {
-                return res.status(403).send({
-                    success: false,
-                    message: 'You are not a seller'
-                });
-            }
-            const seller = await User.findSellerByAccountId(req.user.id);
-            if (!seller.length) {
-                return res.status(404).send({
-                    success: false,
-                    message: 'Seller not found'
-                });
-            }
-            await Product.create({ ...req.body, seller: seller[0].id });
+            // const user = await User.findById(req.user.id);
+            // if (!user.length) {
+            //     return res.status(404).send({
+            //         success: false,
+            //         message: 'User not found'
+            //     });
+            // }
+            // if (user[0].role !== 'SELLER') {
+            //     return res.status(403).send({
+            //         success: false,
+            //         message: 'You are not a seller'
+            //     });
+            // }
+            // const seller = await User.findSellerByAccountId(req.user.id);
+            // if (!seller.length) {
+            //     return res.status(404).send({
+            //         success: false,
+            //         message: 'Seller not found'
+            //     });
+            // }
+            await Product.create({ ...req.body});
             return res.status(201).send({
                 success: true,
                 message: 'Product created successfully'

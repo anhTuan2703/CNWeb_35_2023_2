@@ -275,12 +275,16 @@ exports.updateShippingInfo = catchAsyncError(async (req, res, next) =>{
 
 //add product 
 exports.addProduct = catchAsyncError(async (req, res, next) =>{
+	const productId = req.params.productId;
+
+	let remain = true;
+	const amountRemain = (await query (`SELECT number FROM Product WHERE id = ${productId}`));
+	remain = amountRemain > 0;
 
 	const customerId = req.body.customer_id;
 	console.log(customerId)
 	const id = (await query(`SELECT id FROM Orders WHERE customer_id = ${customerId} AND status = 'pending'`))[0].id;
 
-	const productId = req.params.productId;
 
 	const existingItem = await query(
 		"SELECT id, amount FROM itemOrder WHERE order_id = ? AND product_id = ?", 
@@ -301,13 +305,16 @@ exports.addProduct = catchAsyncError(async (req, res, next) =>{
 	}else{
 		const now = new Date();
 		const createdAt = now.toISOString().slice(0, 19).replace('T', ' ');
-		const sql_orderItem =
-			"INSERT INTO ItemOrder (order_id, product_id, amount, created_at) VALUES (?,?,?,?)";
-		const params_orderItem = [id, productId, 1, createdAt];
-		await query(sql_orderItem, params_orderItem);
+		// const sql_orderItem =
+		// 	"INSERT INTO ItemOrder (order_id, product_id, amount, created_at) VALUES (?,?,?,?)";
+		// const params_orderItem = [id, productId, 1, createdAt];
+		// await query(sql_orderItem, params_orderItem);
+
+		await query (`INSERT INTO ItemOrder (order_id, product_id, amount, created_at) VALUES (${id},${productId},1, '${createdAt}')`)
 		res.status(200).json({
 			success: true,
 			massage: "Add product to cart successfully",
 		});		
 	}
+
 });
