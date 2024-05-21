@@ -48,24 +48,19 @@ exports.deleteItemOrder = catchAsyncError(async (req, res, next) => {
 exports.updateOrder = catchAsyncError(async (req, res, next) => {
 	//const id = req.params.id;
 	const body = req.body;
-	console.log(req.body)
+	// console.log(req.body)
 	const customerId = req.params.customer_id;
 	const orderIdQuery = await query(
 		`SELECT id FROM orders WHERE customer_id = ${customerId} AND status = 'pending'`
 	);
-
 	const id = orderIdQuery[0].id;
-
-
 	const shipPrice = body.ship_price === undefined ? 0 : body.ship_price;
 	const totalPrice = body.total_price === undefined ? 0 : body.total_price;
 	await query(
 		`UPDATE orders SET ship_price ="${shipPrice}", total_price = "${totalPrice}" WHERE id = ${id}`,
 		[],
 	);
-
     const ship_id = (await query("SELECT ship_id FROM orders WHERE id = ?", [id]))[0].ship_id;
-
     const shippingInfo = body.shipping_info;
     for (const key in shippingInfo) {
         await query(
@@ -73,33 +68,56 @@ exports.updateOrder = catchAsyncError(async (req, res, next) => {
             [],
         );
     }
-
 	const itemsOrder = body.items_order;
-	if (itemsOrder != null){
+
+	if (itemsOrder != null && itemsOrder.length > 0){
 		for (const item of itemsOrder){
 			const productId = item.id;
-			const amount = parseInt(item.amount);
-			const existingItem = await query(
-				"SELECT id, amount FROM itemOrder WHERE order_id = ? AND product_id = ?", 
-				[id, productId]
-			);
-			if (existingItem.length > 0) {
-				const itemId = existingItem[0].id;
-				await query("UPDATE itemOrder SET amount = ? WHERE id = ?", [amount, itemId]);
-			} else {
-				const now = new Date();
-				console.log(now.toISOString().slice(0, 19).replace('T', ' '));	
-				await query("INSERT INTO itemOrder (product_id, order_id, amount, created_at) VALUES (?, ?, ?, ?)", 
-            				[productId, id, amount, now.toISOString().slice(0, 19).replace('T', ' ')]);
+			const amountInCart = parseInt(item.amount);
 
+			const amountRemainQuery = (await query (`SELECT number FROM Product WHERE id = ${productId}`))[0];
+			const amountRemain = amountRemainQuery.number;
+
+			console.log(amountRemain +" "+ amountInCart)
+			if (amountRemain >= amountInCart){
+				const existingItem = await query(
+					"SELECT id, amount FROM itemOrder WHERE order_id = ? AND product_id = ?", 
+					[id, productId]
+				);
+				if (existingItem.length > 0) {
+					const itemId = existingItem[0].id;
+					await query("UPDATE itemOrder SET amount = ? WHERE id = ?", [amountInCart, itemId]);
+				} else {
+					const now = new Date();
+					console.log(now.toISOString().slice(0, 19).replace('T', ' '));	
+					await query("INSERT INTO itemOrder (product_id, order_id, amount, created_at) VALUES (?, ?, ?, ?)", 
+								[productId, id, amountInCart, now.toISOString().slice(0, 19).replace('T', ' ')]);
+				}
+				const updateOrder = await query("SELECT * FROM orders WHERE id = ?", [id]);
+				res.status(200).json({
+					success: true,
+					data: updateOrder[0],
+					message: "Change successfully"
+				});
+			}else{
+				console.log("can't increase")
+				return res.status(201).json({
+					success: false,
+					message: "Out of product amount, remain " + amountRemain
+				})
 			}
 		}
+	}
+	else{
+		await query(`DELETE FROM itemOrder WHERE order_id =${id}`);
+		
 	}
 
 	const updateOrder = await query("SELECT * FROM orders WHERE id = ?", [id]);
 	res.status(200).json({
 		status: "success",
 		data: updateOrder[0],
+		message: "Change successfully"
 	});
 });
 
@@ -168,14 +186,10 @@ exports.getOrderDetail = catchAsyncError(async (req, res, next) =>{
 exports.placedOrder = catchAsyncError(async (req, res, next) =>{
 
 	const customerId = req.params.customer_id;
-	console.log("place order: " + customerId);
 	const orderQuery = await query ("SELECT * FROM orders WHERE customer_id = ? and status = 'pending'", [customerId]);
 
 	if (orderQuery.length == 0){
-
-		//create
-
-		res.status(500).json({
+		res.status(201).json({
 			success: false,
 			massage: "Don't have any order, created new one successfully"
 		});
@@ -185,17 +199,36 @@ exports.placedOrder = catchAsyncError(async (req, res, next) =>{
 	const order = orderQuery[0];
 	const orderId = order.id;
 
-	const itemsOrderQuery = await query(`SELECT * FROM ItemOrder WHERE order_id = ${orderId}`)
-	if (itemsOrderQuery.length == 0){
-		res.status(500).json({
+	const itemsOrder = await query(`SELECT * FROM ItemOrder WHERE order_id = ${orderId}`)
+	if (itemsOrder.length == 0){
+		res.status(201).json({
 			success: false,
 			massage: "Don't have any order, created new one successfully"
 		});
 	}
-	console.log(orderId)
 	if (order.status == "pending"){
-		await query(`UPDATE orders SET status = 'placed' WHERE id = ${orderId}`);
+//update product amount
+// -> item_order -> productId & amount
 
+		var amountRemains = []
+		for (var i = 0; i < itemsOrder.length; i++){
+			const amountRemainQuery = (await query (`SELECT number FROM Product WHERE id = ${itemsOrder[i].product_id}`))[0];
+			const amountRemain = amountRemainQuery.number;
+
+			amountRemains.push(amountRemain);
+			if (amountRemain < itemsOrder[i].amount){
+				return res.status(201).json({
+					success: false,
+					message: "Out of product amount, remain " + amountRemain
+				})
+			}
+		}
+
+		for (var i = 0; i < itemsOrder.length; i++){
+			await query(`UPDATE Product SET number = ${amountRemains[i] - itemsOrder[i].amount} WHERE id = ${itemsOrder[i].product_id}`);
+		}
+
+		await query(`UPDATE orders SET status = 'placed' WHERE id = ${orderId}`);
 		const order = new Order({customer_id: customerId})
 		try {
 			const newOrder = await order.createOrder();
@@ -209,14 +242,14 @@ exports.placedOrder = catchAsyncError(async (req, res, next) =>{
 			content: "You've placed an order, check it!"
 		}
 		await Notify(targetMail, mailContent);
-		res.status(200).json({
+		return res.status(200).json({
 			success: true,
-			massage: "Place order succesfully"
+			message: "Place order succesfully"
 		});
 	}
 	res.status(400).json({
 		success: false,
-		massage: "Place order failed"
+		message: "Place order failed"
 	});
 
 });
@@ -277,9 +310,9 @@ exports.updateShippingInfo = catchAsyncError(async (req, res, next) =>{
 exports.addProduct = catchAsyncError(async (req, res, next) =>{
 	const productId = req.params.productId;
 
-	let remain = true;
-	const amountRemain = (await query (`SELECT number FROM Product WHERE id = ${productId}`));
-	remain = amountRemain > 0;
+	// let isRemain = true;
+	// const amountRemain = (await query (`SELECT number FROM Product WHERE id = ${productId}`));
+	// isRemain = amountRemain > 0;
 
 	const customerId = req.body.customer_id;
 	console.log(customerId)
@@ -305,11 +338,6 @@ exports.addProduct = catchAsyncError(async (req, res, next) =>{
 	}else{
 		const now = new Date();
 		const createdAt = now.toISOString().slice(0, 19).replace('T', ' ');
-		// const sql_orderItem =
-		// 	"INSERT INTO ItemOrder (order_id, product_id, amount, created_at) VALUES (?,?,?,?)";
-		// const params_orderItem = [id, productId, 1, createdAt];
-		// await query(sql_orderItem, params_orderItem);
-
 		await query (`INSERT INTO ItemOrder (order_id, product_id, amount, created_at) VALUES (${id},${productId},1, '${createdAt}')`)
 		res.status(200).json({
 			success: true,

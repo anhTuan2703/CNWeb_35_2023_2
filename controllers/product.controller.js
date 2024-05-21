@@ -5,27 +5,6 @@ const { query } = require('../database/database.js');
 class ProductController {
     static createProduct = async (req, res) => {
         try {
-            // const user = await User.findById(req.user.id);
-            // if (!user.length) {
-            //     return res.status(404).send({
-            //         success: false,
-            //         message: 'User not found'
-            //     });
-            // }
-            // if (user[0].role !== 'SELLER') {
-            //     return res.status(403).send({
-            //         success: false,
-            //         message: 'You are not a seller'
-            //     });
-            // }
-            // const seller = await User.findSellerByAccountId(req.user.id);
-            // if (!seller.length) {
-            //     return res.status(404).send({
-            //         success: false,
-            //         message: 'Seller not found'
-            //     });
-            // }
-            
             const existing= (await query(`SELECT * FROM Product WHERE name = '${req.body.name.trim()}'`))
             console.log(existing)
             if (existing > 0){
@@ -35,11 +14,20 @@ class ProductController {
                 })
             }
             console.log("heeeeee")
-            await Product.create({ ...req.body});
-            return res.status(201).send({
-                success: true,
-                message: 'Product created successfully'
-            });
+            const newProduct = await Product.create({ ...req.body});
+
+            if(newProduct){
+                return res.status(201).send({
+                    success: true,
+                    message: 'Product created successfully'
+                });                
+            }else{
+                return res.status(201).send({
+                    success: false,
+                    message: 'Lack of information'
+                });   
+            }
+
         } catch (error) {
             return res.status(400).send({
                 success: false,
