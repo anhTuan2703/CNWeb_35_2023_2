@@ -28,7 +28,7 @@ class AccessController {
             const order = new Order({customer_id: customerId})
             const newOrder = await order.createOrder();
 
-            const targetMail = "vituan121002@gmail.com";
+            const targetMail = email;
             const mailContent = {
                 subject: "Welcome to group 35",
                 content: "You've created an account in our web, hope you enjoy it."

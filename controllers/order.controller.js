@@ -235,8 +235,9 @@ exports.placedOrder = catchAsyncError(async (req, res, next) =>{
 		} catch (err) {
 			console.log(err);
 		}
+		const user = await query (`SELECT * FROM Account WHERE id = ${customerId}`)[0];
 
-		const targetMail = "vituan121002@gmail.com";
+		const targetMail = user.email;
 		const mailContent = {
 			subject: "Group 35",
 			content: "You've placed an order, check it!"
